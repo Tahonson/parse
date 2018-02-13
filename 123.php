@@ -1,9 +1,16 @@
 <?php
 
-$url = 'https://www.livelib.ru/book/1002730309/quotes-stigmalion-kristina-stark#quotes'; // ссылка для парса
+
+// в случае если понадобится на одну страницу - вот алгоритм ; в get_all_pages - этот алгоритм уже есть
+$input_page = "https://www.livelib.ru/book/1002730309-stigmalion-kristina-stark";
+preg_match_all('|https:..www.livelib.ru.book.*?-(.*)|', $input_page, $lib);
+$input_page = mb_strimwidth($input_page, 0, 46, "/quotes-");
+
+$url = $input_page .$lib[1][0] ."#quotes";
 
 // n - кол-во страниц ;
 $n = 3;
+
 
 class Pages
 {
@@ -102,7 +109,9 @@ class Pages
 }
 
 //var_dump(get_first_page($url));
-print_r(Pages::get_all_pages($url, $n));
+
 //echo get_all_pages($url,$n);
 
 // <a class="right object-link" href="/quote/87-tri-tovarischa-e-m-remark" title="Перейти к цитате">
+
+print_r(Pages::get_all_pages($url, $n));
