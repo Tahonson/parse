@@ -2,14 +2,18 @@
 
 
 // в случае если понадобится на одну страницу - вот алгоритм ; в get_all_pages - этот алгоритм уже есть
-$input_page = "https://www.livelib.ru/book/1002730309-stigmalion-kristina-stark";
-preg_match_all('|https:..www.livelib.ru.book.*?-(.*)|', $input_page, $lib);
-$input_page = mb_strimwidth($input_page, 0, 46, "/quotes-");
-
-$url = $input_page . $lib[1][0] . "#quotes";
 
 // n - кол-во страниц ;
-$n = 3;
+
+//$input_page = "https://www.livelib.ru/book/1002730309-stigmalion-kristina-stark";
+//preg_match_all('|https:..www.livelib.ru.book.*?-(.*)|', $input_page, $lib);
+//$input_page = mb_strimwidth($input_page, 0, 46, "/quotes-");
+//
+//$url = $input_page . $lib[1][0] . "#quotes";
+//
+//
+//$n = 3;
+
 
 
 class Pages
@@ -122,7 +126,10 @@ class Pages
 
             $item = [];
             //обложка href=""
-            preg_match_all('||sei', $result_body, $picture);
+            $pic = "https://i.livelib.ru/boocover/1000216804/140x220/5f6c/Daniel_Kiz__Tsvety_dlya_Eldzhernona.jpg";
+            preg_match('|https:\/\/i\.livelib\.ru\/boocover\/(.*?)\/.*?\/(.*?)\/(.*?)\.jpg|sei', $pic, $picture);
+            $picture_url = "https://i.livelib.ru/boocover/" .$picture[1] ."/o/" ."$picture[2]/" .$picture[3] .".jpeg";
+
             //название книги
             preg_match_all('|<a class="book-name" href=".*?" title=".*?">(.*?)<.a>|sei', $result_body, $name);
             //автор книги
@@ -133,7 +140,7 @@ class Pages
 
             $item['name'] = $name[0];
             $item['author'] = $author[0];
-            $item['picture'] = $picture[1][0];
+            $item['picture'] = $picture_url;
             $item['title'] = $title[0];
 
             $content_massive[] = $item;
