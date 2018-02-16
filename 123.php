@@ -2,17 +2,12 @@
 
 
 // в случае если понадобится на одну страницу - вот алгоритм ; в get_all_pages - этот алгоритм уже есть
-
-// n - кол-во страниц ;
-
+// n - кол-во цитат;
 //$input_page = "https://www.livelib.ru/book/1002730309-stigmalion-kristina-stark";
 //preg_match_all('|https:..www.livelib.ru.book.*?-(.*)|', $input_page, $lib);
 //$input_page = mb_strimwidth($input_page, 0, 46, "/quotes-");
-//
 //$url = $input_page . $lib[1][0] . "#quotes";
-//
-//
-//$n = 3;
+
 
 
 
@@ -77,18 +72,31 @@ class Pages
         }
     }
 
-// информация из страницы с книгой ( все цитаты постранично )
+// Информация из страницы с книгой
     static function get_all_pages($url, $n)
     {
+
+        // кол-во цитат на странице - 10 ;
+        if ($n % 10 == 0) {
+            $pages = (integer)($n/10);
+        } else {
+            $pages = $n % 10 +1;
+        }
+
+
+        $m = $n - $pages*10;
+
         $pages_content = [];
 
-        for ($i = 1; $i <= $n; $i++) {
+        for ($i = 1; $i <= $pages; $i++) {
             $url = mb_strimwidth($url, 0, 47, "/~");
             $url = $url . "$i";
 
             $pages_content_massive = Pages::get_content($url);
             if ($pages_content_massive != 0) {
-
+                if ($i = $pages and $n % 10 != 0 ) {
+                    $pages_content = array_slice ( $pages_content_massive , 0, $m-1 );
+                }
                 $pages_content[] = $pages_content_massive;
 
             } else {
@@ -99,7 +107,7 @@ class Pages
         return $pages_content;
     }
 
-// информация из страницы с цитатой
+// Информация из страницы с цитатой
     static function get_page_info($url)
     {
         $ch = curl_init();
@@ -126,8 +134,8 @@ class Pages
 
             $item = [];
             //обложка href=""
-            $pic = "https://i.livelib.ru/boocover/1000216804/140x220/5f6c/Daniel_Kiz__Tsvety_dlya_Eldzhernona.jpg";
-            preg_match('|https:\/\/i\.livelib\.ru\/boocover\/(.*?)\/.*?\/(.*?)\/(.*?)\.jpg|sei', $pic, $picture);
+            preg_match("|<a href=.*?><img data-pagespeed-lazy-src=\"(.*?)\"|",$result_body,$pic);
+            preg_match('|https:\/\/i\.livelib\.ru\/boocover\/(.*?)\/.*?\/(.*?)\/(.*?)\.jpg|sei', $pic[0], $picture);
             $picture_url = "https://i.livelib.ru/boocover/" .$picture[1] ."/o/" ."$picture[2]/" .$picture[3] .".jpeg";
 
             //название книги
@@ -152,18 +160,28 @@ class Pages
         }
 
     }
-// страницы цитат автора
+// Информация из страницы цитат автора
     static function get_author_page($url, $n)
     {
+        if ($n % 10 == 0) {
+            $pages = (integer)($n/10);
+        } else {
+            $pages = $n % 10 +1;
+        }
+
+        $m = $n - $pages*10;
+
         $pages_content = [];
 
-        for ($i = 1; $i <= $n; $i++) {
+        for ($i = 1; $i <= $pages; $i++) {
             $url = mb_strimwidth($url, 0, 45, "/~");
             $url = $url . "$i";
 
             $pages_content_massive = Pages::get_content($url);
             if ($pages_content_massive != 0) {
-
+                if ($i = $pages and $n % 10 != 0 ) {
+                    $pages_content = array_slice ( $pages_content_massive , 0, $m-1 );
+                }
                 $pages_content[] = $pages_content_massive;
 
             } else {
